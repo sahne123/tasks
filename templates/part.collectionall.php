@@ -5,7 +5,7 @@
             <text>{{ list.displayname }}</text>
         </h2>
         <ol class="tasks">
-            <li ng-animate="'animate'" ng-repeat="task in tasks | filter:filterTasks(task,list.id) | filter:filterTasks(task,route.listID) | filter:filterTasksByString(task) | orderBy:sortDue | orderBy:'priority':true | orderBy:'completed_date':true"
+            <li ng-animate="'animate'" ng-repeat="task in tasks | filter:hasNoParent(task) | filter:filterTasks(task,list.id) | filter:filterTasks(task,route.listID) | filter:filterTasksByString(task) | orderBy:sortDue | orderBy:'priority':true | orderBy:'completed_date':true"
             class="task-item ui-draggable handler" rel="{{ task.id }}" ng-click="openDetails(task.id,$event)" ng-class="{done: task.completed}" oc-drag-task>
                 <?php print_unescaped($this->inc('part.taskbody')); ?>
             </li>

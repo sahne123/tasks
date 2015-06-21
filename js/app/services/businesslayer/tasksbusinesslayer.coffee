@@ -35,6 +35,8 @@ angular.module('Tasks').factory 'TasksBusinessLayer',
 
 			@_$tasksmodel.add(task)
 
+			@uncompleteParents(task.related)
+
 			success = (response) =>
 				if response.status == 'error'
 					onFailure()
@@ -65,17 +67,43 @@ angular.module('Tasks').factory 'TasksBusinessLayer',
 			@_$tasksmodel.setPercentComplete(taskID, percentComplete)
 			if percentComplete < 100
 				@_$tasksmodel.uncomplete(taskID)
+				task = @_$tasksmodel.getById(taskID)
+				@uncompleteParents(task.related)
 			else
 				@_$tasksmodel.complete(taskID)
+				@completeChildren(taskID)
 			@_persistence.setPercentComplete(taskID, percentComplete)
 
 		completeTask: (taskID) ->
 			@setPercentComplete(taskID,100)
+			@hideSubtasks(taskID)
 
 		uncompleteTask: (taskID) ->
 			@setPercentComplete(taskID,0)
 
+		completeChildren: (taskID) ->
+			childrenID = @_$tasksmodel.getChildrenID(taskID)
+			for childID in childrenID
+				@setPercentComplete(childID,100)
+
+		uncompleteParents: (uid) ->
+			if uid
+				parentID = @_$tasksmodel.getIdByUid(uid)
+				if @_$tasksmodel.completed(parentID)
+					@setPercentComplete(parentID,0)
+
+		unhideSubtasks: (taskID) ->
+			@_$tasksmodel.setShowSubtasks(taskID,true)
+			@_persistence.setShowSubtasks(taskID,true)
+
+		hideSubtasks: (taskID) ->
+			@_$tasksmodel.setShowSubtasks(taskID,false)
+			@_persistence.setShowSubtasks(taskID,false)
+
 		deleteTask: (taskID) ->
+			childrenID = @_$tasksmodel.getChildrenID(taskID)
+			for childID in childrenID
+				@deleteTask(childID)
 			@_$tasksmodel.removeById(taskID)
 			@_persistence.deleteTask(taskID)
 
@@ -311,6 +339,12 @@ angular.module('Tasks').factory 'TasksBusinessLayer',
 		changeCalendarId: (taskID, calendarID) ->
 			@_$tasksmodel.changeCalendarId(taskID, calendarID)
 			@_persistence.changeCalendarId(taskID, calendarID)
+			childrenID = @_$tasksmodel.getChildrenID(taskID)
+			task = @_$tasksmodel.getById(taskID)
+			for childID in childrenID
+				child = @_$tasksmodel.getById(childID)
+				if child.calendarID != task.calendarID
+					@changeCalendarId(childID,task.calendarID)
 
 		setTaskNote: (taskID, note) ->
 			@_persistence.setTaskNote(taskID, note)
@@ -318,7 +352,11 @@ angular.module('Tasks').factory 'TasksBusinessLayer',
 		setTaskName: (taskID, name) ->
 			@_persistence.setTaskName(taskID, name)
 
-		changeList: (listID, taskID) ->
+		changeList: (taskID, listID) ->
+
+			@_$tasksmodel.changeParent(taskID,null)
+			@_persistence.changeParent(taskID,null)
+
 			switch listID
 				when 'starred'
 					@starTask(taskID)
@@ -331,6 +369,18 @@ angular.module('Tasks').factory 'TasksBusinessLayer',
 				when 'week', 'all'
 				else
 					@changeCalendarId(taskID,listID)
+
+		changeParent: (taskID, parentID) ->
+			parent = @_$tasksmodel.getById(parentID)
+			task = @_$tasksmodel.getById(taskID)
+			@_$tasksmodel.changeParent(taskID,parent.uid)
+			@_persistence.changeParent(taskID,parent.uid)
+
+			if parent.completed && !task.completed
+				@uncompleteTask(parentID)
+
+			if parent.calendarID != task.calendarID
+				@changeCalendarId(taskID,parent.calendarID)
 
 		updateModel: () ->
 			@_$tasksmodel.voidAll()

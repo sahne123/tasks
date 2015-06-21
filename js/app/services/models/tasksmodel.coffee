@@ -116,6 +116,40 @@ angular.module('Tasks').factory 'TasksModel',
 		isLoaded: (task) ->
 			return if @getById(task.id) then true else false
 
+		hasSubtasks: (uid) ->
+			tasks = @getAll()
+			for task in tasks
+				if task.related == uid
+					return true
+			return false
+
+		hasNoParent: (task) ->
+			if !task.related
+				return true
+			else
+				tasks = @getAll()
+				for t in tasks
+					if task.related == t.uid
+						return false
+				return true
+
+		# TODO: store UID by ID in tasksmodel to speed things up
+		getIdByUid: (uid) ->
+			tasks = @getAll()
+			for task in tasks
+				if task.uid == uid
+					return task.id
+			return false
+
+		getChildrenID: (taskID) ->
+			task = @getById(taskID)
+			tasks = @getAll()
+			childrenID = []
+			for t in tasks
+				if t.related == task.uid
+					childrenID.push t.id
+			return childrenID
+
 		filterTasks: (task, filter) ->
 			switch filter
 				when 'completed'
@@ -152,6 +186,12 @@ angular.module('Tasks').factory 'TasksModel',
 						else if value.toLowerCase().indexOf(filter) !=-1
 							return true
 				return false
+
+		showSubtasks: (taskID) ->
+			return @getById(taskID).showsubtasks
+
+		setShowSubtasks: (taskID,show) ->
+			@update({id:taskID,showsubtasks:show})
 
 		starred: (taskID) ->
 			return @getById(taskID).starred
@@ -215,6 +255,9 @@ angular.module('Tasks').factory 'TasksModel',
 
 		changeCalendarId: (taskID, calendarID) ->
 			@update({id:taskID,calendarid:calendarID})
+
+		changeParent: (taskID, related) ->
+			@update({id:taskID,related:related})
 
 		setNote: (taskID, note) ->
 			@update({id:taskID,note:note})

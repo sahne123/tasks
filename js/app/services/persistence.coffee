@@ -219,13 +219,23 @@ angular.module('Tasks').factory 'Persistence',
 
 			@_request.post '/apps/tasks/tasks/{taskID}/priority', params
 
+		setShowSubtasks: (taskID, show) ->
+			params =
+				routeParams:
+					taskID: taskID
+				data:
+					show: show
+
+			@_request.post '/apps/tasks/tasks/{taskID}/showsubtasks', params
+
 		addTask: (task, onSuccess=null, onFailure=null) ->
 			onSuccess or= ->
 			onFailure or= ->
 			params =
 				data:
 					name:		task.name
-					calendarID:	task.calendarID
+					related:	task.related
+					calendarID:	task.calendarid
 					starred:	task.starred
 					due:		task.due
 					start:		task.start
@@ -302,6 +312,17 @@ angular.module('Tasks').factory 'Persistence',
 					calendarID: calendarID
 
 			@_request.post '/apps/tasks/tasks/{taskID}/calendar', params
+
+			@_request.post '/apps/tasks/tasks/{taskID}/reminder', params
+
+		changeParent: (taskID, related) ->
+			params =
+				routeParams:
+					taskID: taskID
+				data:
+					related: related
+
+			@_request.post '/apps/tasks/tasks/{taskID}/parent', params
 
 		setTaskName: (taskID, name) ->
 			params =

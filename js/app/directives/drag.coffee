@@ -27,7 +27,7 @@ angular.module('Tasks').directive 'ocDragTask', ->
 			cursorAt: { left: 150, top:15 }
 			distance: 4
 			start: (event,ui) ->
-				$(this).css('visibility','hidden')
+				$(this).addClass('visibility-hidden')
 			stop: (event,ui) ->
-				$(this).css('visibility','visible')
+				$(this).removeClass('visibility-hidden')
 		})

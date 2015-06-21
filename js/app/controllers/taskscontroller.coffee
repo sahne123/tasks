@@ -71,14 +71,24 @@ SettingsBusinessLayer, SearchBusinessLayer) ->
 								.replace('%s',
 								_$listsmodel.getById(_$scope.route.listID).displayname)
 
+			@_$scope.getSubAddString = (taskname) ->
+				return t('tasks','Add a subtask to "%s"...')
+								.replace('%s', taskname)
+
+			@_$scope.showSubtaskInput = (uid) ->
+				_$scope.status.addSubtaskTo = uid
+
 			@_$scope.showInput = () ->
 				if _$scope.route.listID in ['completed', 'week']
 					return false
 				else
 					return true
 
-			@_$scope.focusInput = () ->
+			@_$scope.focusTaskInput = () ->
 				_$scope.status.focusTaskInput = true
+
+			@_$scope.focusSubtaskInput = () ->
+				_$scope.status.focusSubtaskInput = true
 
 			@_$scope.openDetails = (id,$event) ->
 				if $($event.currentTarget).is($($event.target).closest('.handler'))
@@ -104,6 +114,26 @@ SettingsBusinessLayer, SearchBusinessLayer) ->
 			@_$scope.filterTasks = (task, filter) ->
 				return (task) ->
 					return _$tasksmodel.filterTasks(task, filter)
+
+			@_$scope.getSubTasks = (tasks,parent) ->
+				ret = []
+				for task in tasks
+					if task.related == parent.uid
+						ret.push(task)
+				return ret
+
+			@_$scope.hasNoParent = (task) ->
+				return (task) ->
+					return _$tasksmodel.hasNoParent(task)
+
+			@_$scope.hasSubtasks = (task) ->
+				return _$tasksmodel.hasSubtasks(task.uid)
+
+			@_$scope.toggleSubtasks = (taskID) ->
+				if _$tasksmodel.showSubtasks(taskID)
+					_tasksbusinesslayer.hideSubtasks(taskID)
+				else
+					_tasksbusinesslayer.unhideSubtasks(taskID)
 
 			@_$scope.filterTasksByString = (task) =>
 				return (task) ->
@@ -140,23 +170,26 @@ SettingsBusinessLayer, SearchBusinessLayer) ->
 				return n('tasks', '%n Completed Task', '%n Completed Tasks',
 						_$listsmodel.getCount(listID,type,filter))
 
-			@_$scope.addTask = (taskName) ->
+			@_$scope.addTask = (taskName,related='') ->
 
 				_$scope.isAddingTask = true
 
 				task = {
 					tmpID:		'newTask' + Date.now()
-					calendarID:	null
+					calendarid:	null
+					related:	related
 					name:		taskName
 					starred:	false
 					due:		false
 					start:		false
 					completed:	false
+					complete:	'0'
+					note:		false
 				}
 
 				if (_$scope.route.listID in
 				['starred', 'today', 'week', 'all', 'completed', 'current'])
-					task.calendarID = _$listsmodel.getStandardList()
+					task.calendarid = _$listsmodel.getStandardList()
 					if _$scope.route.listID == 'starred'
 						task.starred = true
 					if _$scope.route.listID == 'today'
@@ -164,8 +197,7 @@ SettingsBusinessLayer, SearchBusinessLayer) ->
 					if _$scope.route.listID == 'current'
 						task.start = moment().format("YYYYMMDDTHHmmss")
 				else
-					task.calendarID = _$scope.route.listID
-
+					task.calendarid = _$scope.route.listID
 
 				_tasksbusinesslayer.addTask task
 				, (data) =>
@@ -175,13 +207,17 @@ SettingsBusinessLayer, SearchBusinessLayer) ->
 					_$scope.isAddingTask = false
 
 				_$scope.status.focusTaskInput = false
-				_$scope.taskName = ''
+				_$scope.status.focusSubtaskInput = false
+				_$scope.status.addSubtaskTo = ''
+				_$scope.status.taskName = ''
 
-			@_$scope.checkTaskInput = (event) ->
-				if(event.keyCode == 27)
-					$('#target').blur()
-					_$scope.taskName = ""
+			@_$scope.checkTaskInput = ($event) ->
+				if($event.keyCode == 27)
+					$($event.currentTarget).blur()
+					_$scope.status.taskName = ''
+					_$scope.status.addSubtaskTo = ''
 					_$scope.status.focusTaskInput = false
+					_$scope.status.focusSubtaskInput = false
 
 			@_$scope.getCompletedTasks = (listID) ->
 				_tasksbusinesslayer.getCompletedTasks(listID)

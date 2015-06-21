@@ -123,10 +123,11 @@ class TasksService {
 	 * @param  int    $tmpID
 	 * @return array
 	 */
-	public function add($taskName, $calendarId, $starred, $due, $start, $tmpID){
+	public function add($taskName, $related, $calendarId, $starred, $due, $start, $tmpID){
 		$user_timezone = \OC_Calendar_App::getTimezone();
 		$request = array(
 				'summary'			=> $taskName,
+				'related'			=> $related,
 				'categories'		=> null,
 				'priority'			=> $starred,
 				'location' 			=> null,
@@ -228,6 +229,42 @@ class TasksService {
 			$vtodo->PRIORITY = (10 - $priority) % 10;
 		}else{
 			unset($vtodo->{'PRIORITY'});
+		}
+		return \OC_Calendar_Object::edit($taskID, $vcalendar->serialize());
+	}
+
+	/**
+	 * set view state of subtasks
+	 * 
+	 * @param  int    $taskID
+	 * @param  int    $show
+	 * @return bool
+	 */
+	public function setShowSubtasks($taskID, $show){
+		$vcalendar = \OC_Calendar_App::getVCalendar($taskID);
+		$vtodo = $vcalendar->VTODO;
+		if($show){
+			$vtodo->{'X-OC-SHOWSUBTASKS'} = 1;
+		}else{
+			$vtodo->{'X-OC-SHOWSUBTASKS'} = 0;
+		}
+		return \OC_Calendar_Object::edit($taskID, $vcalendar->serialize());
+	}
+
+	/**
+	 * set parent of subtask
+	 * 
+	 * @param  int    $taskID
+	 * @param  int    $related
+	 * @return bool
+	 */
+	public function changeParent($taskID, $related){
+		$vcalendar = \OC_Calendar_App::getVCalendar($taskID);
+		$vtodo = $vcalendar->VTODO;
+		if($related){
+			$vtodo->{'RELATED-TO'} = $related;
+		} else {
+			unset($vtodo->{'RELATED-TO'});
 		}
 		return \OC_Calendar_Object::edit($taskID, $vcalendar->serialize());
 	}

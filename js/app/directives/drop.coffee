@@ -19,16 +19,33 @@ You should have received a copy of the GNU Affero General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 ###
-angular.module('Tasks').directive 'ocDropTask', ->
+angular.module('Tasks').directive 'ocDropTask', ($timeout) ->
 	link: (scope, elm, attr) ->
 		elm.droppable({
 			over: (event,ui) ->
-				$(this).addClass('dragOver')
+				# <- can be written prettier with AngularJS 1.4
+				hovering = (tmp) ->
+					$(tmp).addClass('changeParent')
+				scope.timer = $timeout( hovering.bind(null,this,ui)
+				,1000)
+				# ->
 			out: (event,ui) ->
-				$(this).removeClass('dragOver')
+				$timeout.cancel(scope.timer)
+				$(this).removeClass('changeParent')
 			deactivate: (event,ui) ->
-				$(this).removeClass('dragOver')
+				$timeout.cancel(scope.timer)
+				$(this).removeClass('changeParent')
 			drop: (event,ui) ->
-				scope.$apply(scope.TasksBusinessLayer
-				.changeList($(this).attr('rel'), ui.helper.attr('rel')))
+				$timeout.cancel(scope.timer)
+				scope.$apply(
+					if attr.type == 'task' &&
+					$(this).hasClass('changeParent')
+						scope.TasksBusinessLayer
+						.changeParent(ui.helper.attr('taskID'),$(this).attr('taskID'))
+					if attr.type == 'list' &&
+					!$(this).hasClass('changeParent')
+						scope.TasksBusinessLayer
+						.changeList(ui.helper.attr('taskID'),$(this).attr('listID'))
+				)
+				$(this).removeClass('changeParent')
 		})

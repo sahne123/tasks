@@ -52,6 +52,15 @@ Class Helper {
 		$task['created'] = (string) $vtodo->CREATED;
 		$task['note'] = (string) $vtodo->DESCRIPTION;
 		$task['location'] = (string) $vtodo->LOCATION;
+		$task['uid'] = (string) $vtodo->UID;
+		$task['related'] = (string) $vtodo->__get('RELATED-TO');
+		$showsubtasks = (string) $vtodo->__get('X-OC-SHOWSUBTASKS');
+		// show subtasks on default
+		if ($showsubtasks == '0'){
+			$task['showsubtasks'] = false;
+		} else {
+			$task['showsubtasks'] = true;
+		}
 		$categories = $vtodo->CATEGORIES;
 		if ($categories){
 			$task['categories'] = $categories->getParts();
@@ -274,6 +283,9 @@ Class Helper {
 		}
 		if($request["categories"]){
 			$vtodo->CATEGORIES = $request["categories"];
+		}
+		if($request["related"]){
+			$vtodo->{'RELATED-TO'} = $request["related"];
 		}
 		if($request['priority']) {
 			$vtodo->PRIORITY = 5; // prio: medium

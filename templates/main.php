@@ -82,8 +82,8 @@
                 <a class="input-date">
                     <span class="icon input-date"></span>
                 </a>
-                <form ng-submit="addTask(taskName)" name="addTaskForm">
-                    <input id="target" ng-disabled="isAddingTask" ng-click="focusInput()" class="transparent" placeholder="{{ getAddString() }}" ng-model="taskName"
+                <form ng-submit="addTask(status.taskName)" name="addTaskForm">
+                    <input id="target" ng-disabled="isAddingTask" ng-click="focusTaskInput()" class="transparent" placeholder="{{ getAddString() }}" ng-model="status.taskName"
                         ng-keydown="checkTaskInput($event)"/>
                 </form>
             </div>
@@ -117,4 +117,7 @@
             </div>
         </div>
     </div>
+    <script type="text/ng-template" id="part.taskbody">
+        <?php print_unescaped($this->inc('part.taskbody')); ?>
+    </script>
 </div>

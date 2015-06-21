@@ -69,6 +69,24 @@ class TasksController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 */
+	public function setShowSubtasks($taskID,$show){
+		return $this->generateResponse(function () use ($taskID, $show) {
+			return $this->tasksService->setShowSubtasks($taskID, $show);
+		});
+	}
+
+	/**
+	 * @NoAdminRequired
+	 */
+	public function changeParent($taskID,$related){
+		return $this->generateResponse(function () use ($taskID, $related) {
+			return $this->tasksService->changeParent($taskID, $related);
+		});
+	}
+
+	/**
+	 * @NoAdminRequired
+	 */
 	public function percentComplete($taskID, $complete){
 		return $this->generateResponse(function () use ($taskID, $complete) {
 			return $this->tasksService->setPercentComplete($taskID, $complete);
@@ -78,9 +96,9 @@ class TasksController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 */
-	public function addTask($name, $calendarID, $starred, $due, $start, $tmpID){
-		return $this->generateResponse(function () use ($name, $calendarID, $starred, $due, $start, $tmpID) {
-			return $this->tasksService->add($name, $calendarID, $starred, $due, $start, $tmpID);
+	public function addTask($name, $related, $calendarID, $starred, $due, $start, $tmpID){
+		return $this->generateResponse(function () use ($name, $related, $calendarID, $starred, $due, $start, $tmpID) {
+			return $this->tasksService->add($name, $related, $calendarID, $starred, $due, $start, $tmpID);
 		});
 	}
 

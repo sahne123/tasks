@@ -28,6 +28,13 @@
 	padding: 0;
 	text-decoration: none;
 }
+.visibility-hidden{
+	visibility: hidden;
+}
+.task-body.changeParent{
+	border-color:blue !important;
+	z-index:100 !important;
+}
 #app-navigation {
 	li {
 		transition: max-height 300ms ease 0s;
@@ -142,6 +149,11 @@
 		}
 		&.task-attachment{
 			background-position: 0 -60px;
+			display: none;
+		}
+		&.subtasks{
+			display: none;
+			background-position: -220px -100px;
 		}
 		&.detail-trash{
 			background-position: -260px 0px;
@@ -237,8 +249,8 @@
 			border-width: 1px;
 		}
 	}
-	li.task-item:last-child{
-		height: 39px;
+	li.task-item:first-child{
+		margin-top: 0;
 		.task-body{
 			border-width: 1px;
 		}
@@ -246,16 +258,41 @@
 	li, div{
 		&.task-item{
 			cursor:default;
-			height: 37px;
+			min-height: 37px;
 			list-style: none outside none;
 			overflow: hidden;
-			z-index: 100 !important;
-			&.done{
+			margin-top: -1px;
+			.subtasks-container{
+				margin-left: 35px;
+			}
+			&.add-subtask{
+				background: #ffffff;
+				border: 1px solid #cccccc;
+				padding: 6px 12px;
+				input{
+					background: transparent none repeat scroll 0 0 !important;
+					border: medium none !important;
+					border-radius: 0 !important;
+					box-shadow: none !important;
+					box-sizing: border-box;
+					color: #505050;
+					cursor: text;
+					font-size: 13px;
+					font-weight: bold;
+					margin: 0;
+					padding: 0 60px 0 0;
+					width: 100%;
+				}
+			}
+			&.done .task-body{
 				opacity: 0.6;
 				.title {
 					text-decoration: line-through;
 					text-shadow: none;
 				}
+			}
+			.subtasks-container .task-item{
+				margin-top:-1px;
 			}
 			.task-body{
 				-moz-box-sizing: border-box;
@@ -265,7 +302,7 @@
 				margin: 0;
 				position: relative;
 				border-style: solid;
-				border-width: 1px 1px 0;
+				border-width: 1px;
 				border-color: #CCCCCC;
 				.icon{
 					&.task-separator {
@@ -296,6 +333,16 @@
 							background-position: -180px -40px !important;
 						}
 					}
+					&.addsubtask {
+						background-position: 0 -80px;
+						float: right;
+						margin: 0 2px 0 5px;
+						height: 34px;
+						width: 20px;
+						&:hover{
+							background-position: -20px -80px;
+						}
+					}
 				}
 				.title-wrapper {
 					cursor:pointer;
@@ -315,10 +362,16 @@
 					&.attachment .task-attachment {
 						display: inline-block;
 					}
-					.task-attachment {
-						display: none;
-						height: 20px;
-						margin-top: -3px;
+					&.subtasks{
+						.subtasks{
+							display: inline-block;
+						}
+						&.subtaskshidden .subtasks{
+							background-position: -260px -100px;
+							&:hover{
+								background-position: -220px -100px;
+							}
+						}
 					}
 				}
 				.duedate {
@@ -1237,6 +1290,7 @@ div.ui-datepicker, div.ui-timepicker{
 
 li.ui-draggable-dragging{
 	width:300px;
+	z-index: 101 !important;
 	.duedate{
 		display:none;
 	}
