@@ -12,7 +12,7 @@
     </a>
     <a class="duedate" ng-class="{overdue: TasksModel.overdue(task.due)}">{{ task.due | dateTaskList }}</a>
     <a ng-show="route.listID=='week'" class="listname" >{{ getTaskList(task.calendarid) }}</a>
-    <div class="title-wrapper"  ng-class="{attachment: task.note!='', subtasks: hasSubtasks(task), subtaskshidden: !task.showsubtasks}">
+    <div class="title-wrapper"  ng-class="{attachment: task.note!='', subtasks: hasSubtasks(task), subtaskshidden: task.hidesubtasks}">
         <span class="title">{{ task.name }}</span>
         <span class="icon task-attachment"></span>
         <span class="icon subtasks handler" ng-click="toggleSubtasks(task.id)"></span>
@@ -23,7 +23,7 @@
         </span>
     </div>
 </div>
-<div class="subtasks-container" ng-show="task.showsubtasks">
+<div class="subtasks-container" ng-hide="task.hidesubtasks">
     <ol>
         <li class="task-item ui-draggable handler add-subtask" ng-show="status.addSubtaskTo == task.uid">
             <form ng-submit="addTask(status.taskName,task.uid)" name="addTaskForm">

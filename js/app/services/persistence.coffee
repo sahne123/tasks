@@ -219,14 +219,14 @@ angular.module('Tasks').factory 'Persistence',
 
 			@_request.post '/apps/tasks/tasks/{taskID}/priority', params
 
-		setShowSubtasks: (taskID, show) ->
+		setHideSubtasks: (taskID, hide) ->
 			params =
 				routeParams:
 					taskID: taskID
 				data:
-					show: show
+					hide: hide
 
-			@_request.post '/apps/tasks/tasks/{taskID}/showsubtasks', params
+			@_request.post '/apps/tasks/tasks/{taskID}/hidesubtasks', params
 
 		addTask: (task, onSuccess=null, onFailure=null) ->
 			onSuccess or= ->

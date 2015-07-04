@@ -1168,10 +1168,10 @@
             return _$tasksmodel.hasSubtasks(task.uid);
           };
           this._$scope.toggleSubtasks = function(taskID) {
-            if (_$tasksmodel.showSubtasks(taskID)) {
-              return _tasksbusinesslayer.hideSubtasks(taskID);
-            } else {
+            if (_$tasksmodel.hideSubtasks(taskID)) {
               return _tasksbusinesslayer.unhideSubtasks(taskID);
+            } else {
+              return _tasksbusinesslayer.hideSubtasks(taskID);
             }
           };
           this._$scope.filterTasksByString = function(task) {
@@ -1600,13 +1600,13 @@
         };
 
         TasksBusinessLayer.prototype.unhideSubtasks = function(taskID) {
-          this._$tasksmodel.setShowSubtasks(taskID, true);
-          return this._persistence.setShowSubtasks(taskID, true);
+          this._$tasksmodel.setHideSubtasks(taskID, false);
+          return this._persistence.setHideSubtasks(taskID, false);
         };
 
         TasksBusinessLayer.prototype.hideSubtasks = function(taskID) {
-          this._$tasksmodel.setShowSubtasks(taskID, false);
-          return this._persistence.setShowSubtasks(taskID, false);
+          this._$tasksmodel.setHideSubtasks(taskID, true);
+          return this._persistence.setHideSubtasks(taskID, true);
         };
 
         TasksBusinessLayer.prototype.deleteTask = function(taskID) {
@@ -2537,14 +2537,14 @@
           return false;
         };
 
-        TasksModel.prototype.showSubtasks = function(taskID) {
-          return this.getById(taskID).showsubtasks;
+        TasksModel.prototype.hideSubtasks = function(taskID) {
+          return this.getById(taskID).hidesubtasks;
         };
 
-        TasksModel.prototype.setShowSubtasks = function(taskID, show) {
+        TasksModel.prototype.setHideSubtasks = function(taskID, hide) {
           return this.update({
             id: taskID,
-            showsubtasks: show
+            hidesubtasks: hide
           });
         };
 
@@ -2999,17 +2999,17 @@
           return this._request.post('/apps/tasks/tasks/{taskID}/priority', params);
         };
 
-        Persistence.prototype.setShowSubtasks = function(taskID, show) {
+        Persistence.prototype.setHideSubtasks = function(taskID, hide) {
           var params;
           params = {
             routeParams: {
               taskID: taskID
             },
             data: {
-              show: show
+              hide: hide
             }
           };
-          return this._request.post('/apps/tasks/tasks/{taskID}/showsubtasks', params);
+          return this._request.post('/apps/tasks/tasks/{taskID}/hidesubtasks', params);
         };
 
         Persistence.prototype.addTask = function(task, onSuccess, onFailure) {

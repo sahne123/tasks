@@ -130,10 +130,10 @@ SettingsBusinessLayer, SearchBusinessLayer) ->
 				return _$tasksmodel.hasSubtasks(task.uid)
 
 			@_$scope.toggleSubtasks = (taskID) ->
-				if _$tasksmodel.showSubtasks(taskID)
-					_tasksbusinesslayer.hideSubtasks(taskID)
-				else
+				if _$tasksmodel.hideSubtasks(taskID)
 					_tasksbusinesslayer.unhideSubtasks(taskID)
+				else
+					_tasksbusinesslayer.hideSubtasks(taskID)
 
 			@_$scope.filterTasksByString = (task) =>
 				return (task) ->

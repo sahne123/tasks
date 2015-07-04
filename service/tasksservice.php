@@ -214,6 +214,27 @@ class TasksService {
 		return \OC_Calendar_Object::edit($taskID, $vcalendar->serialize());
 	}
 
+
+	/**
+	 * set property of a task
+	 * 
+	 * @param  int    $taskID
+	 * @param  string $property
+	 * @param  int    $value
+	 * @return bool
+	 * @throws \Exception
+	 */
+	private function setProperty($taskID,$property,$value){
+		$vcalendar = \OC_Calendar_App::getVCalendar($taskID);
+		$vtodo = $vcalendar->VTODO;
+		if($value){
+			$vtodo->{$property} = $value;
+		}else{
+			unset($vtodo->{$property});
+		}
+		return \OC_Calendar_Object::edit($taskID, $vcalendar->serialize());
+	}
+
 	/**
 	 * set priority of task by id
 	 * 
@@ -223,14 +244,8 @@ class TasksService {
 	 * @throws \Exception
 	 */
 	public function priority($taskID, $priority){
-		$vcalendar = \OC_Calendar_App::getVCalendar($taskID);
-		$vtodo = $vcalendar->VTODO;
-		if($priority){
-			$vtodo->PRIORITY = (10 - $priority) % 10;
-		}else{
-			unset($vtodo->{'PRIORITY'});
-		}
-		return \OC_Calendar_Object::edit($taskID, $vcalendar->serialize());
+		$priority = (10 - $priority) % 10;
+		return $this->setProperty($taskID,'PRIORITY',$priority);
 	}
 
 	/**
@@ -240,15 +255,8 @@ class TasksService {
 	 * @param  int    $show
 	 * @return bool
 	 */
-	public function showSubtasks($taskID, $show){
-		$vcalendar = \OC_Calendar_App::getVCalendar($taskID);
-		$vtodo = $vcalendar->VTODO;
-		if($show){
-			$vtodo->{'X-OC-SHOWSUBTASKS'} = 1;
-		}else{
-			$vtodo->{'X-OC-SHOWSUBTASKS'} = 0;
-		}
-		return \OC_Calendar_Object::edit($taskID, $vcalendar->serialize());
+	public function hideSubtasks($taskID, $show){
+		return $this->setProperty($taskID,'X-OC-HIDESUBTASKS',$show);
 	}
 
 	/**
@@ -259,14 +267,7 @@ class TasksService {
 	 * @return bool
 	 */
 	public function parent($taskID, $related){
-		$vcalendar = \OC_Calendar_App::getVCalendar($taskID);
-		$vtodo = $vcalendar->VTODO;
-		if($related){
-			$vtodo->{'RELATED-TO'} = $related;
-		} else {
-			unset($vtodo->{'RELATED-TO'});
-		}
-		return \OC_Calendar_Object::edit($taskID, $vcalendar->serialize());
+		return $this->setProperty($taskID,'RELATED-TO',$related);
 	}
 
 	/**

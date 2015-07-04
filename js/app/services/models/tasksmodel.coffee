@@ -187,11 +187,11 @@ angular.module('Tasks').factory 'TasksModel',
 							return true
 				return false
 
-		showSubtasks: (taskID) ->
-			return @getById(taskID).showsubtasks
+		hideSubtasks: (taskID) ->
+			return @getById(taskID).hidesubtasks
 
-		setShowSubtasks: (taskID,show) ->
-			@update({id:taskID,showsubtasks:show})
+		setHideSubtasks: (taskID,hide) ->
+			@update({id:taskID,hidesubtasks:hide})
 
 		starred: (taskID) ->
 			return @getById(taskID).starred

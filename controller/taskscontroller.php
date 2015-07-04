@@ -69,9 +69,9 @@ class TasksController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 */
-	public function setShowSubtasks($taskID,$show){
-		return $this->generateResponse(function () use ($taskID, $show) {
-			return $this->tasksService->showSubtasks($taskID, $show);
+	public function setHideSubtasks($taskID,$hide){
+		return $this->generateResponse(function () use ($taskID, $hide) {
+			return $this->tasksService->hideSubtasks($taskID, $hide);
 		});
 	}
 

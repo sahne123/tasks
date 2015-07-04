@@ -54,12 +54,12 @@ Class Helper {
 		$task['location'] = (string) $vtodo->LOCATION;
 		$task['uid'] = (string) $vtodo->UID;
 		$task['related'] = (string) $vtodo->__get('RELATED-TO');
-		$showsubtasks = (string) $vtodo->__get('X-OC-SHOWSUBTASKS');
+		$hidesubtasks = (string) $vtodo->__get('X-OC-HIDESUBTASKS');
 		// show subtasks on default
-		if ($showsubtasks == '0'){
-			$task['showsubtasks'] = false;
+		if ($hidesubtasks == '1'){
+			$task['hidesubtasks'] = true;
 		} else {
-			$task['showsubtasks'] = true;
+			$task['hidesubtasks'] = false;
 		}
 		$categories = $vtodo->CATEGORIES;
 		if ($categories){

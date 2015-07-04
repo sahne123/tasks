@@ -93,12 +93,12 @@ angular.module('Tasks').factory 'TasksBusinessLayer',
 					@setPercentComplete(parentID,0)
 
 		unhideSubtasks: (taskID) ->
-			@_$tasksmodel.setShowSubtasks(taskID,true)
-			@_persistence.setShowSubtasks(taskID,true)
+			@_$tasksmodel.setHideSubtasks(taskID,false)
+			@_persistence.setHideSubtasks(taskID,false)
 
 		hideSubtasks: (taskID) ->
-			@_$tasksmodel.setShowSubtasks(taskID,false)
-			@_persistence.setShowSubtasks(taskID,false)
+			@_$tasksmodel.setHideSubtasks(taskID,true)
+			@_persistence.setHideSubtasks(taskID,true)
 
 		deleteTask: (taskID) ->
 			childrenID = @_$tasksmodel.getChildrenID(taskID)
