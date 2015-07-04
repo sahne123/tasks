@@ -222,7 +222,7 @@ class TasksService {
 	 * @return bool
 	 * @throws \Exception
 	 */
-	public function setPriority($taskID, $priority){
+	public function priority($taskID, $priority){
 		$vcalendar = \OC_Calendar_App::getVCalendar($taskID);
 		$vtodo = $vcalendar->VTODO;
 		if($priority){
@@ -240,7 +240,7 @@ class TasksService {
 	 * @param  int    $show
 	 * @return bool
 	 */
-	public function setShowSubtasks($taskID, $show){
+	public function showSubtasks($taskID, $show){
 		$vcalendar = \OC_Calendar_App::getVCalendar($taskID);
 		$vtodo = $vcalendar->VTODO;
 		if($show){
@@ -258,7 +258,7 @@ class TasksService {
 	 * @param  int    $related
 	 * @return bool
 	 */
-	public function changeParent($taskID, $related){
+	public function parent($taskID, $related){
 		$vcalendar = \OC_Calendar_App::getVCalendar($taskID);
 		$vtodo = $vcalendar->VTODO;
 		if($related){

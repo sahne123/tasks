@@ -62,7 +62,7 @@ class TasksController extends Controller {
 	 */
 	public function setPriority($taskID,$priority){
 		return $this->generateResponse(function () use ($taskID, $priority) {
-			return $this->tasksService->setPriority($taskID, $priority);
+			return $this->tasksService->priority($taskID, $priority);
 		});
 	}
 
@@ -71,7 +71,7 @@ class TasksController extends Controller {
 	 */
 	public function setShowSubtasks($taskID,$show){
 		return $this->generateResponse(function () use ($taskID, $show) {
-			return $this->tasksService->setShowSubtasks($taskID, $show);
+			return $this->tasksService->showSubtasks($taskID, $show);
 		});
 	}
 
@@ -80,7 +80,7 @@ class TasksController extends Controller {
 	 */
 	public function changeParent($taskID,$related){
 		return $this->generateResponse(function () use ($taskID, $related) {
-			return $this->tasksService->changeParent($taskID, $related);
+			return $this->tasksService->parent($taskID, $related);
 		});
 	}
 
